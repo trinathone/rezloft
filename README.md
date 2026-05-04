@@ -1,6 +1,7 @@
 # DiceBot — Automated Dice.com Job Application Bot
 
 > **New here? Read [START_HERE.md](START_HERE.md) first.**
+> https://rezloft.vercel.app/
 
 > Gets you into 8,000+ vendor databases automatically. Let vendors find you.
 
