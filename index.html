@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DiceBot — Automated C2C Resume Injector for Dice.com</title>
+<meta name="description" content="DiceBot injects your resume into thousands of C2C vendor databases on Dice.com automatically. Free, open source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0d0f; --surface: #141416; --border: #222226;
+    --text: #e8e8ec; --muted: #888896; --accent: #7c6aff;
+    --accent-dim: rgba(124,106,255,.12); --green: #22c55e;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: 'JetBrains Mono', monospace; font-size: .85em; background: var(--surface); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; }
+  section { max-width: 860px; margin: 0 auto; padding: 72px 24px; }
+  h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 32px; color: var(--text); letter-spacing: -.01em; }
+  hr { border: none; border-top: 1px solid var(--border); }
+
+  /* Hero */
+  #hero { text-align: center; padding: 100px 24px 72px; }
+  #hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 20px; }
+  #hero h1 span { color: var(--accent); }
+  #hero p { font-size: 1.1rem; color: var(--muted); max-width: 580px; margin: 0 auto 36px; }
+  .btn { display: inline-block; background: var(--accent); color: #fff; font-weight: 600; padding: 13px 28px; border-radius: 8px; font-size: .95rem; transition: opacity .15s; }
+  .btn:hover { opacity: .85; text-decoration: none; }
+
+  /* Numbers */
+  #numbers { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0; }
+  #numbers .inner { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .stat { text-align: center; padding: 36px 16px; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat strong { display: block; font-size: 1.9rem; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+  .stat span { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; display: block; }
+
+  /* Steps */
+  .steps { display: flex; flex-direction: column; gap: 24px; }
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; display: flex; gap: 20px; align-items: flex-start; }
+  .step-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+  .step h3 { font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
+  .step p { font-size: .9rem; color: var(--muted); }
+
+  /* Who */
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); padding: 7px 16px; border-radius: 999px; font-size: .85rem; font-weight: 500; }
+
+  /* Why */
+  #why blockquote { border-left: 3px solid var(--accent); padding: 20px 24px; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-size: 1rem; line-height: 1.75; }
+  #why blockquote strong { color: var(--text); }
+
+  /* FAQ */
+  .faq { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .faq-item { padding: 22px 24px; border-bottom: 1px solid var(--border); }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item h3 { font-size: .9rem; font-weight: 600; margin-bottom: 6px; }
+  .faq-item p { font-size: .875rem; color: var(--muted); }
+  .warn { color: #f59e0b; }
+
+  /* Footer */
+  footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85rem; }
+  footer a { color: var(--muted); }
+  footer a:hover { color: var(--text); }
+  footer .links { display: flex; justify-content: center; gap: 24px; margin-top: 12px; }
+
+  @media (max-width: 600px) {
+    #numbers .inner { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(3) { border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section id="hero">
+  <h1>Stop Chasing Jobs.<br><span>Let Vendors Find You.</span></h1>
+  <p>DiceBot injects your resume into thousands of C2C vendor databases on Dice.com — automatically. Vendors with real roles call you.</p>
+  <a href="#github" class="btn">Download Free on GitHub →</a>
+</section>
+
+<!-- Numbers -->
+<div id="numbers">
+  <div class="inner">
+    <div class="stat"><strong>8,202</strong><span>Applications sent</span></div>
+    <div class="stat"><strong>10</strong><span>Days running</span></div>
+    <div class="stat"><strong>99.76%</strong><span>Success rate</span></div>
+    <div class="stat"><strong style="color:var(--green)">0</strong><span>Bot detections</span></div>
+  </div>
+</div>
+
+<!-- How It Works -->
+<section id="how">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">🔍</div>
+      <div>
+        <h3>Searches your keywords on Dice.com</h3>
+        <p>Reads from <code>keywords.txt</code> — one term per line. Cycles through them in order, paginating until exhausted, then rotates to the next.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">💉</div>
+      <div>
+        <h3>Auto-applies to every C2C Easy Apply posting</h3>
+        <p>Clicks Apply, walks multi-step forms, uploads your resume, submits. Tracks every application — never applies to the same job twice.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">📞</div>
+      <div>
+        <h3>Vendors with real roles find your resume and call you</h3>
+        <p>Your resume is now inside their ATS. When a matching role comes in, they search their database — you surface. Inbound only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- Who It's For -->
+<section id="who">
+  <h2>Who It's For</h2>
+  <div class="pills">
+    <span class="pill">C2C contractors on the bench</span>
+    <span class="pill">Bench sales recruiters</span>
+    <span class="pill">Independent IT consultants</span>
+    <span class="pill">1099 / Corp-to-Corp developers</span>
+    <span class="pill">Anyone tired of ghost jobs</span>
+  </div>
+</section>
+
+<hr>
+
+<!-- Why It Works -->
+<section id="why">
+  <h2>Why It Works</h2>
+  <blockquote>
+    Most contractors apply to 10 jobs and wait. <strong>DiceBot gets your resume into thousands of vendor ATS systems.</strong>
+    When a real role comes in, vendors search their own database — your resume surfaces.
+    You only respond to real inbound calls. <strong>No ghost jobs. No black hole applications.</strong>
+  </blockquote>
+</section>
+
+<hr>
+
+<!-- FAQ -->
+<section id="faq">
+  <h2>FAQ</h2>
+  <div class="faq">
+    <div class="faq-item">
+      <h3><span class="warn">⚠</span> Does this violate Dice.com's Terms of Service?</h3>
+      <p>Yes. Automated job applications are against Dice's ToS. The bot includes anti-detection measures (Bezier mouse paths, human typing delays, fingerprint spoofing) but no tool guarantees zero account risk. Use it at your own discretion.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Which jobs does it apply to?</h3>
+      <p>Easy Apply jobs only — the ones with a one-click apply button hosted on Dice. Jobs that redirect to external ATS platforms (Workday, Greenhouse, Lever) are skipped automatically.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Does it customize my resume per application?</h3>
+      <p>No. The same resume PDF is uploaded to every application. You point <code>RESUME_PATH</code> in <code>.env</code> to a single file. Resume rotation per keyword is on the roadmap.</p>
+    </div>
+    <div class="faq-item">
+      <h3>How many applications per day is safe?</h3>
+      <p>250–300/day is the recommended rate. Running above 300/day increases the risk of account action. Control throughput via <code>BATCH_SIZE</code> and <code>BATCH_BREAK_MINUTES</code> in <code>config.py</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>Free forever. Open Source. GPL v3 License.</div>
+  <div class="links">
+    <a href="#github">GitHub →</a>
+    <a href="mailto:your@email.com">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
