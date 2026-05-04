@@ -28,25 +28,20 @@ If you bill on 1099 or Corp-to-Corp and Dice is part of your sourcing strategy, 
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/youruser/dicebot.git
-cd dicebot
+git clone https://github.com/trinathone/dice-bot.git
+cd dice-bot
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 playwright install chromium
 
-# 2. Set up keywords
-cp keywords.example.txt keywords.txt
-# Edit keywords.txt — one search term per line
+# 2. Run setup wizard (configures credentials, keywords, speed)
+python3 setup.py
 
-# 3. Configure credentials
-cp env.example .env
-# Edit .env with your Dice email and password
-
-# 4. Run
-python dice_bot.py
-# Or on Mac (keeps machine awake):
-./run.sh
+# 3. Run the bot
+python3 dice_bot.py
 ```
+
+> **Windows?** See [START_HERE.md](START_HERE.md) for Windows-specific instructions.
 
 ---
 
@@ -73,6 +68,8 @@ Copy `keywords.example.txt` as a starting point — it includes 20 common IT/C2C
 
 ### `.env`
 
+The setup wizard (`python3 setup.py`) creates this automatically. You can also edit it manually:
+
 | Variable | Required | Description |
 |---|---|---|
 | `DICE_EMAIL` | ✅ | Your Dice.com login email |
@@ -80,18 +77,20 @@ Copy `keywords.example.txt` as a starting point — it includes 20 common IT/C2C
 | `PROXY` | ❌ | Optional SOCKS5/HTTP proxy (`socks5://user:pass@host:port`) |
 | `DEBUG` | ❌ | Set `true` for verbose logging (default: `false`) |
 
-Additional tuning (edit `config.py` directly):
+### `config.py` tuning
+
+Edit `config.py` directly to change these:
 
 | Setting | Default | Description |
 |---|---|---|
 | `EASY_APPLY_ONLY` | `True` | Only apply to Easy Apply jobs |
-| `JOB_TYPES` | `["fulltime"]` | Filter by job type |
+| `JOB_TYPES` | `['fulltime']` | Filter by job type (`'contract'` or `'fulltime'`) |
 | `REMOTE_ONLY` | `False` | Remote jobs only |
 | `JOB_LOCATION` | `""` | Location filter (empty = nationwide) |
 | `SLEEP_HOUR_START` | `2` | Bot sleeps after this hour (24h) |
 | `SLEEP_HOUR_END` | `3` | Bot wakes at this hour (24h) |
-| `BATCH_SIZE` | `(60, 80)` | Apps per batch before a short break |
-| `BATCH_BREAK_MINUTES` | `(3, 5)` | Break duration between batches |
+| `BATCH_SIZE` | `(80, 100)` | Apps per batch before a short break |
+| `BATCH_BREAK_MINUTES` | `(2, 3)` | Break duration between batches (minutes) |
 
 ---
 
@@ -102,21 +101,24 @@ Additional tuning (edit `config.py` directly):
 ```bash
 # On your Oracle VM (Ubuntu)
 sudo apt update && sudo apt install -y python3-pip python3-venv
-git clone https://github.com/youruser/dicebot.git && cd dicebot
+git clone https://github.com/trinathone/dice-bot.git && cd dice-bot
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 playwright install chromium --with-deps
 
+# Run setup wizard first
+python3 setup.py
+
 # Run headless in the background (set HEADLESS=True in config.py first)
-nohup python dice_bot.py > /dev/null 2>&1 &
+nohup python3 dice_bot.py > /dev/null 2>&1 &
 
 # Or with screen so you can detach/reattach
 screen -S dicebot
-python dice_bot.py
+python3 dice_bot.py
 # Ctrl+A D to detach
 ```
 
-Set `HEADLESS = True` in `config.py` before running on a server (no display available).
+> Set `HEADLESS = True` in `config.py` before running on a server (no display available).
 
 ---
 
