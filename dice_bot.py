@@ -154,6 +154,13 @@ class DiceBot:
                 pass
         asyncio.ensure_future(_close())
 
+    # ── Session Guard — re-login if kicked out mid-run ────────
+    async def _ensure_logged_in(self):
+        url = self.page.url.lower()
+        if "login" in url or "signin" in url or "sign-in" in url:
+            logger.warning("Session expired — re-logging in automatically...")
+            await self._login()
+
     # ── Login ─────────────────────────────────────────────────
     async def _login(self):
         logger.info("Checking login state...")
@@ -238,6 +245,9 @@ class DiceBot:
             if not await self._ensure_page_alive():
                 logger.error("Page unrecoverable — restarting session")
                 return
+
+            # Re-login if session was dropped
+            await self._ensure_logged_in()
 
             logger.info(f"Query: '{current_query}' | Page {page_num}")
             await self._run_search(current_query, page_num)
@@ -408,6 +418,9 @@ class DiceBot:
 
             await short_delay()
             await scroll_to_read(self.page)
+
+            # Re-login if job page redirected to login
+            await self._ensure_logged_in()
 
             # Check for block BEFORE clicking anything
             if await self._detect_block():
