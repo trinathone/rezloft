@@ -162,6 +162,14 @@ Open an issue before starting large changes.
 
 ---
 
+## Support & Community
+
+- 💬 Telegram: https://t.me/+rz7W7lhhUEkwOTM1
+- 📧 Email: trinath.connect@proton.me
+- ⭐ If DiceBot helped you land a contract, star the repo!
+
+---
+
 ## License
 
 GPL v3 — Free to use and modify. If you build a paid product from this code, you must open source it too.

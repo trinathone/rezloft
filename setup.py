@@ -228,6 +228,9 @@ def main():
     print("━" * 30)
     print("✅ Setup complete! Run:  python dice_bot.py")
     print()
+    print("💬 Join the community: https://t.me/+rz7W7lhhUEkwOTM1")
+    print("📧 Support: trinath.connect@proton.me")
+    print()
 
 
 if __name__ == "__main__":

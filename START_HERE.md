@@ -113,3 +113,7 @@ Paste this into Claude.ai or ChatGPT:
 "Help me set up this project: [YOUR GITHUB URL]"
 ```
 The AI will guide you through any errors step by step.
+
+## Need Help?
+- Join Telegram community: https://t.me/+rz7W7lhhUEkwOTM1
+- Email: trinath.connect@proton.me
