@@ -28,8 +28,8 @@ If you bill on 1099 or Corp-to-Corp and Dice is part of your sourcing strategy, 
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/trinathone/dice-bot.git
-cd dice-bot
+git clone https://github.com/trinathone/rezloft.git
+cd rezloft
 python3 -m venv .venv && source .venv/bin/activate
 pip3 install -r requirements.txt
 playwright install chromium
@@ -101,7 +101,7 @@ Edit `config.py` directly to change these:
 ```bash
 # On your Oracle VM (Ubuntu)
 sudo apt update && sudo apt install -y python3-pip python3-venv
-git clone https://github.com/trinathone/dice-bot.git && cd dice-bot
+git clone https://github.com/trinathone/rezloft.git && cd rezloft
 python3 -m venv .venv && source .venv/bin/activate
 pip3 install -r requirements.txt
 playwright install chromium --with-deps
