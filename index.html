@@ -3,184 +3,872 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DiceBot — Automated C2C Resume Injector for Dice.com</title>
-<meta name="description" content="DiceBot injects your resume into thousands of C2C vendor databases on Dice.com automatically. Free, open source.">
+<title>DiceBot — Automated Dice.com Job Application Bot</title>
+<meta name="description" content="DiceBot auto-applies to thousands of Easy Apply jobs on Dice.com. Built for C2C contractors, bench sales, and IT consultants who want inbound vendor calls.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0d0d0f; --surface: #141416; --border: #222226;
-    --text: #e8e8ec; --muted: #888896; --accent: #7c6aff;
-    --accent-dim: rgba(124,106,255,.12); --green: #22c55e;
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  code { font-family: 'JetBrains Mono', monospace; font-size: .85em; background: var(--surface); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; }
-  section { max-width: 860px; margin: 0 auto; padding: 72px 24px; }
-  h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 32px; color: var(--text); letter-spacing: -.01em; }
-  hr { border: none; border-top: 1px solid var(--border); }
 
-  /* Hero */
-  #hero { text-align: center; padding: 100px 24px 72px; }
-  #hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 20px; }
-  #hero h1 span { color: var(--accent); }
-  #hero p { font-size: 1.1rem; color: var(--muted); max-width: 580px; margin: 0 auto 36px; }
-  .btn { display: inline-block; background: var(--accent); color: #fff; font-weight: 600; padding: 13px 28px; border-radius: 8px; font-size: .95rem; transition: opacity .15s; }
-  .btn:hover { opacity: .85; text-decoration: none; }
+/* ── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: 'Inter', sans-serif; background: #f8f7f4; color: #1a1a2e; line-height: 1.6; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
 
-  /* Numbers */
-  #numbers { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0; }
-  #numbers .inner { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .stat { text-align: center; padding: 36px 16px; border-right: 1px solid var(--border); }
-  .stat:last-child { border-right: none; }
-  .stat strong { display: block; font-size: 1.9rem; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
-  .stat span { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-top: 4px; display: block; }
+/* ── Typography ──────────────────────────────────────────── */
+.serif { font-family: 'Playfair Display', Georgia, serif; }
+.italic { font-style: italic; }
+.mono { font-family: 'JetBrains Mono', monospace; }
 
-  /* Steps */
-  .steps { display: flex; flex-direction: column; gap: 24px; }
-  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; display: flex; gap: 20px; align-items: flex-start; }
-  .step-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
-  .step h3 { font-size: .95rem; font-weight: 600; margin-bottom: 4px; }
-  .step p { font-size: .9rem; color: var(--muted); }
+/* ── Layout ──────────────────────────────────────────────── */
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+.container-sm { max-width: 720px; margin: 0 auto; padding: 0 24px; }
 
-  /* Who */
-  .pills { display: flex; flex-wrap: wrap; gap: 10px; }
-  .pill { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); padding: 7px 16px; border-radius: 999px; font-size: .85rem; font-weight: 500; }
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn-dark {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #1a1a2e; color: #fff;
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+  padding: 13px 26px; border-radius: 999px;
+  transition: background .2s, transform .15s;
+  cursor: pointer; border: none;
+}
+.btn-dark:hover { background: #2d2d4e; transform: translateY(-1px); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: #1a1a2e;
+  font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+  padding: 12px 26px; border-radius: 999px;
+  border: 1.5px solid #1a1a2e;
+  transition: all .2s; cursor: pointer;
+}
+.btn-outline:hover { background: #1a1a2e; color: #fff; }
+.btn-white {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #1a1a2e; color: #fff;
+  font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+  padding: 14px 30px; border-radius: 999px;
+  transition: opacity .2s, transform .15s; cursor: pointer;
+}
+.btn-white:hover { opacity: 0.88; transform: translateY(-1px); }
 
-  /* Why */
-  #why blockquote { border-left: 3px solid var(--accent); padding: 20px 24px; background: var(--surface); border-radius: 0 8px 8px 0; color: var(--muted); font-size: 1rem; line-height: 1.75; }
-  #why blockquote strong { color: var(--text); }
+/* ── Nav ─────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(248,247,244,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  padding: 14px 0;
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1080px; margin: 0 auto; padding: 0 24px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.2rem;
+}
+.nav-logo .dot {
+  width: 30px; height: 30px; background: #1a1a2e; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.85rem; font-family: 'Inter', sans-serif; font-weight: 700;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links a { font-size: 0.875rem; font-weight: 500; color: #444; transition: color .2s; }
+.nav-links a:hover { color: #1a1a2e; }
+.nav-cta { display: flex; align-items: center; gap: 12px; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+.hamburger span { display: block; width: 22px; height: 2px; background: #1a1a2e; border-radius: 2px; transition: all .3s; }
 
-  /* FAQ */
-  .faq { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .faq-item { padding: 22px 24px; border-bottom: 1px solid var(--border); }
-  .faq-item:last-child { border-bottom: none; }
-  .faq-item h3 { font-size: .9rem; font-weight: 600; margin-bottom: 6px; }
-  .faq-item p { font-size: .875rem; color: var(--muted); }
-  .warn { color: #f59e0b; }
+/* ── Hero ────────────────────────────────────────────────── */
+#hero {
+  min-height: 88vh;
+  background: linear-gradient(175deg, #a8d4f0 0%, #c5e3f7 25%, #d8edf8 50%, #eaf4fb 72%, #f8f7f4 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 80px 24px 60px;
+  position: relative; overflow: hidden;
+}
+#hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 90% 60% at 50% 30%, rgba(255,255,255,0.5) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.75); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 999px; padding: 6px 14px;
+  font-size: 0.78rem; font-weight: 600; color: #444;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.hero-badge .star { color: #2563eb; }
+#hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.6rem, 7vw, 5rem);
+  font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+  color: #1a1a2e; margin-bottom: 22px; max-width: 780px;
+}
+#hero h1 em { font-style: italic; }
+#hero p {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: #4a5568; max-width: 560px; margin: 0 auto 38px; line-height: 1.7;
+}
+.hero-btns { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 60px; }
 
-  /* Footer */
-  footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: .85rem; }
-  footer a { color: var(--muted); }
-  footer a:hover { color: var(--text); }
-  footer .links { display: flex; justify-content: center; gap: 24px; margin-top: 12px; }
+/* Dashboard mockup */
+.hero-mockup {
+  width: 100%; max-width: 780px;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.95);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.06);
+  padding: 28px 32px;
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.mock-card {
+  background: #fff; border-radius: 14px; padding: 18px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.mock-label { font-size: 0.72rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.mock-value { font-size: 1.9rem; font-weight: 700; color: #1a1a2e; letter-spacing: -0.03em; }
+.mock-value .unit { font-size: 0.85rem; color: #888; font-weight: 500; margin-left: 2px; }
+.mock-sub { font-size: 0.72rem; margin-top: 6px; }
+.green { color: #16a34a; font-weight: 600; }
+.blue { color: #2563eb; font-weight: 600; }
+.mock-bar { height: 6px; background: #f0f0f0; border-radius: 999px; margin-top: 10px; overflow: hidden; }
+.mock-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #2563eb, #60a5fa); }
 
-  @media (max-width: 600px) {
-    #numbers .inner { grid-template-columns: repeat(2, 1fr); }
-    .stat:nth-child(2) { border-right: none; }
-    .stat:nth-child(3) { border-top: 1px solid var(--border); }
-  }
+/* ── Stats ───────────────────────────────────────────────── */
+#stats { background: #fff; border-top: 1px solid #ebebeb; border-bottom: 1px solid #ebebeb; padding: 0; }
+.stats-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+}
+.stat-item { padding: 40px 20px; text-align: center; border-right: 1px solid #ebebeb; }
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 800;
+  color: #1a1a2e; letter-spacing: -0.03em; display: block;
+}
+.stat-label { font-size: 0.8rem; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px; display: block; }
+
+/* ── Section labels ──────────────────────────────────────── */
+.section-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.75rem; font-weight: 700; color: #444;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 18px;
+}
+.section-badge .star { color: #2563eb; font-size: 0.9rem; }
+
+/* ── About ───────────────────────────────────────────────── */
+#about { padding: 96px 0 80px; }
+#about .container-sm { text-align: center; }
+#about h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 800;
+  line-height: 1.2; color: #1a1a2e; margin-bottom: 20px;
+}
+#about h2 em { font-style: italic; }
+#about p { font-size: 1.05rem; color: #666; max-width: 580px; margin: 0 auto 42px; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 48px; }
+.about-card {
+  background: #fff; border-radius: 18px;
+  border: 1px solid #ebebeb;
+  padding: 28px 26px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: transform .2s, box-shadow .2s;
+  text-align: left;
+}
+.about-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.09); }
+.about-card-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #2563eb; margin-bottom: 10px; }
+.about-card h3 { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; }
+.about-card p { font-size: 0.875rem; color: #666; line-height: 1.65; }
+.about-card-visual {
+  background: #f5f8ff; border-radius: 10px;
+  padding: 14px; margin-bottom: 16px;
+  height: 80px; display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+}
+
+/* ── Blue section (benefits) ─────────────────────────────── */
+#benefits {
+  margin: 0 24px 0; border-radius: 28px;
+  background: linear-gradient(160deg, #7ec8e3 0%, #a8d4f0 30%, #c5e3f7 65%, #87b8d8 100%);
+  padding: 80px 48px;
+  overflow: hidden;
+}
+#benefits h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+  color: #fff; text-align: center; margin-bottom: 12px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+#benefits h2 em { font-style: italic; }
+#benefits .sub { text-align: center; color: rgba(255,255,255,0.85); font-size: 1rem; margin-bottom: 48px; max-width: 520px; margin-left: auto; margin-right: auto; }
+.benefits-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 40px; }
+.benefit-card {
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(10px);
+  border-radius: 16px; padding: 22px 18px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.benefit-icon { font-size: 1.4rem; margin-bottom: 10px; }
+.benefit-card h4 { font-size: 0.9rem; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; line-height: 1.3; }
+.benefit-card p { font-size: 0.8rem; color: #555; line-height: 1.6; }
+.benefits-cta { text-align: center; }
+
+/* ── Features ────────────────────────────────────────────── */
+#features { padding: 96px 0; }
+#features .head { text-align: center; margin-bottom: 56px; }
+#features h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800;
+  line-height: 1.2; color: #1a1a2e;
+}
+#features h2 em { font-style: italic; }
+#features .sub { font-size: 1rem; color: #666; margin-top: 14px; max-width: 520px; margin-left: auto; margin-right: auto; }
+.features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.feature-card {
+  background: #fff; border-radius: 18px; border: 1px solid #ebebeb;
+  padding: 32px 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: transform .2s, box-shadow .2s;
+}
+.feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.09); }
+.feature-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #2563eb; margin-bottom: 10px; }
+.feature-card h3 { font-size: 1.15rem; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; }
+.feature-card p { font-size: 0.875rem; color: #666; line-height: 1.65; }
+.feature-visual {
+  background: #f5f8ff; border-radius: 10px;
+  padding: 16px; margin-bottom: 18px; height: 88px;
+  display: flex; align-items: center; gap: 10px;
+}
+.mini-stat { text-align: left; }
+.mini-stat .num { font-size: 1.6rem; font-weight: 700; color: #1a1a2e; letter-spacing: -0.03em; }
+.mini-stat .lbl { font-size: 0.7rem; color: #888; }
+.mini-gauge {
+  width: 64px; height: 64px; flex-shrink: 0;
+  background: conic-gradient(#2563eb 0% 80%, #e5e7eb 80% 100%);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700;
+}
+.mini-gauge .inner { width: 40px; height: 40px; background: #f5f8ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #1a1a2e; }
+.lock-visual { font-size: 2rem; }
+
+/* ── How it works ────────────────────────────────────────── */
+#how { padding: 0 0 96px; }
+#how .head { text-align: center; margin-bottom: 56px; }
+#how h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800;
+  line-height: 1.2; color: #1a1a2e;
+}
+#how h2 em { font-style: italic; }
+.steps-list { display: flex; flex-direction: column; gap: 16px; }
+.step-row {
+  display: flex; align-items: flex-start; gap: 24px;
+  background: #fff; border-radius: 18px; border: 1px solid #ebebeb;
+  padding: 28px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  transition: transform .2s;
+}
+.step-row:hover { transform: translateX(4px); }
+.step-num {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: #1a1a2e; color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.95rem;
+}
+.step-body h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 6px; }
+.step-body p { font-size: 0.875rem; color: #666; line-height: 1.65; }
+.step-tag { display: inline-block; background: #f0f4ff; color: #2563eb; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; margin-bottom: 8px; }
+
+/* ── Speed / Pricing tiers ───────────────────────────────── */
+#speeds {
+  margin: 0 24px 96px; border-radius: 28px;
+  background: linear-gradient(155deg, #87b8d8 0%, #a8d4f0 40%, #bedcf0 70%, #7ec8e3 100%);
+  padding: 80px 48px;
+}
+#speeds .head { text-align: center; margin-bottom: 52px; }
+#speeds h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+  color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+#speeds h2 em { font-style: italic; }
+#speeds .sub { color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 12px; }
+.speeds-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.speed-card {
+  background: rgba(255,255,255,0.94);
+  border-radius: 20px; padding: 30px 24px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  text-align: center; position: relative;
+  transition: transform .2s;
+}
+.speed-card:hover { transform: translateY(-4px); }
+.speed-card.featured { background: #1a1a2e; }
+.speed-card.featured .speed-name,
+.speed-card.featured .speed-range,
+.speed-card.featured .speed-feat li { color: #fff; }
+.speed-card.featured .speed-feat li::before { color: #60a5fa; }
+.speed-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: #2563eb; color: #fff;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 999px;
+}
+.speed-name { font-size: 0.8rem; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+.speed-range { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; color: #1a1a2e; letter-spacing: -0.02em; }
+.speed-unit { font-size: 0.8rem; color: #888; font-weight: 400; font-family: 'Inter', sans-serif; }
+.speed-feat { list-style: none; margin: 18px 0 24px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+.speed-feat li { font-size: 0.85rem; color: #444; display: flex; align-items: flex-start; gap: 8px; }
+.speed-feat li::before { content: '✓'; color: #2563eb; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+.speed-btn {
+  display: block; width: 100%;
+  background: #1a1a2e; color: #fff;
+  font-weight: 600; font-size: 0.875rem;
+  padding: 12px; border-radius: 999px;
+  font-family: 'Inter', sans-serif;
+  transition: opacity .2s; cursor: pointer; border: none;
+}
+.speed-btn:hover { opacity: 0.85; }
+.speed-card.featured .speed-btn { background: #fff; color: #1a1a2e; }
+
+/* ── FAQ ─────────────────────────────────────────────────── */
+#faq { padding: 0 0 96px; }
+#faq .head { text-align: center; margin-bottom: 52px; }
+#faq h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800; color: #1a1a2e;
+}
+#faq h2 em { font-style: italic; }
+.faq-list { display: flex; flex-direction: column; gap: 12px; }
+.faq-item {
+  background: #fff; border-radius: 16px; border: 1px solid #ebebeb;
+  overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.faq-q {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; cursor: pointer;
+  font-weight: 600; font-size: 0.925rem; color: #1a1a2e;
+  gap: 12px;
+}
+.faq-q .arrow { font-size: 1rem; transition: transform .25s; flex-shrink: 0; color: #888; }
+.faq-a { display: none; padding: 0 24px 20px; font-size: 0.875rem; color: #666; line-height: 1.7; border-top: 1px solid #f0f0f0; padding-top: 16px; }
+.faq-item.open .faq-a { display: block; }
+.faq-item.open .arrow { transform: rotate(180deg); }
+.warn { color: #d97706; }
+
+/* ── CTA bar ─────────────────────────────────────────────── */
+#cta {
+  background: #1a1a2e; border-radius: 24px;
+  margin: 0 24px 80px;
+  padding: 64px 48px; text-align: center;
+}
+#cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+  color: #fff; margin-bottom: 16px;
+}
+#cta h2 em { font-style: italic; color: #93c5fd; }
+#cta p { color: rgba(255,255,255,0.65); font-size: 1rem; margin-bottom: 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.cta-btns { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.btn-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: #1a1a2e;
+  font-weight: 700; font-size: 0.9rem;
+  padding: 13px 26px; border-radius: 999px;
+  transition: opacity .2s, transform .15s;
+}
+.btn-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-cta-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: rgba(255,255,255,0.8);
+  font-weight: 600; font-size: 0.9rem;
+  padding: 12px 26px; border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  transition: all .2s;
+}
+.btn-cta-ghost:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+/* ── Footer ──────────────────────────────────────────────── */
+footer { padding: 48px 0 40px; border-top: 1px solid #ebebeb; }
+.footer-inner {
+  max-width: 1080px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.footer-logo {
+  font-family: 'Playfair Display', serif; font-weight: 800; font-size: 1.1rem; color: #1a1a2e;
+}
+.footer-copy { font-size: 0.8rem; color: #aaa; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { font-size: 0.82rem; color: #888; font-weight: 500; transition: color .2s; }
+.footer-links a:hover { color: #1a1a2e; }
+
+/* ── Mobile nav drawer ───────────────────────────────────── */
+.mobile-menu {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.5); align-items: flex-start; justify-content: flex-end;
+}
+.mobile-menu.open { display: flex; }
+.mobile-drawer {
+  background: #fff; width: 80%; max-width: 320px; height: 100%;
+  padding: 24px; display: flex; flex-direction: column; gap: 8px;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+}
+.drawer-close { align-self: flex-end; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #1a1a2e; margin-bottom: 12px; }
+.mobile-drawer a { font-size: 1rem; font-weight: 600; color: #1a1a2e; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .benefits-grid { grid-template-columns: repeat(2, 1fr); }
+  .speeds-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+  #speeds { padding: 60px 28px; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  #hero { min-height: auto; padding: 60px 20px 48px; }
+  #hero h1 { font-size: 2.2rem; }
+  .hero-mockup { grid-template-columns: 1fr; gap: 10px; padding: 18px; }
+  .stats-inner { grid-template-columns: 1fr; }
+  .stat-item { border-right: none; border-bottom: 1px solid #ebebeb; padding: 28px 20px; }
+  .stat-item:last-child { border-bottom: none; }
+  .about-grid { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .benefits-grid { grid-template-columns: 1fr 1fr; }
+  #benefits { margin: 0 12px; padding: 52px 24px; }
+  #speeds { margin: 0 12px 64px; padding: 52px 20px; }
+  #cta { margin: 0 12px 64px; padding: 48px 24px; }
+  .footer-inner { flex-direction: column; text-align: center; gap: 16px; }
+  .step-row { padding: 22px 18px; gap: 16px; }
+}
+@media (max-width: 480px) {
+  .hero-mockup { display: flex; flex-direction: column; }
+  .benefits-grid { grid-template-columns: 1fr; }
+  .speeds-grid { grid-template-columns: 1fr; }
+  #hero p { font-size: 0.95rem; }
+  .hero-btns { flex-direction: column; align-items: stretch; text-align: center; }
+  .btn-dark, .btn-outline { justify-content: center; }
+  #benefits, #speeds, #cta { margin: 0 8px; border-radius: 18px; }
+  .faq-q { font-size: 0.875rem; }
+}
 </style>
 </head>
 <body>
 
-<!-- Hero -->
-<section id="hero">
-  <h1>Stop Chasing Jobs.<br><span>Let Vendors Find You.</span></h1>
-  <p>DiceBot injects your resume into thousands of C2C vendor databases on Dice.com — automatically. Vendors with real roles call you.</p>
-  <a href="#github" class="btn">Download Free on GitHub →</a>
-</section>
+<!-- ── Nav ──────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="dot">D</div>
+      DiceBot
+    </div>
+    <div class="nav-links">
+      <a href="#how">How It Works</a>
+      <a href="#features">Features</a>
+      <a href="#speeds">Speed</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://github.com/trinathone/dice-bot" class="btn-outline">View on GitHub</a>
+      <a href="https://github.com/trinathone/dice-bot" class="btn-dark">Get Started →</a>
+    </div>
+    <div class="hamburger" onclick="openMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
 
-<!-- Numbers -->
-<div id="numbers">
-  <div class="inner">
-    <div class="stat"><strong>8,202</strong><span>Applications sent</span></div>
-    <div class="stat"><strong>10</strong><span>Days running</span></div>
-    <div class="stat"><strong>99.76%</strong><span>Success rate</span></div>
-    <div class="stat"><strong style="color:var(--green)">0</strong><span>Bot detections</span></div>
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu" onclick="closeMenu(event)">
+  <div class="mobile-drawer">
+    <button class="drawer-close" onclick="closeMenu()">✕</button>
+    <a href="#how" onclick="closeMenu()">How It Works</a>
+    <a href="#features" onclick="closeMenu()">Features</a>
+    <a href="#speeds" onclick="closeMenu()">Speed</a>
+    <a href="#faq" onclick="closeMenu()">FAQ</a>
+    <a href="https://github.com/trinathone/dice-bot" class="btn-dark" style="margin-top:16px;justify-content:center;">Get Started →</a>
   </div>
 </div>
 
-<!-- How It Works -->
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-badge"><span class="star">★</span> FROM BENCH TO BOOKED</div>
+  <h1>Apply to <em>thousands</em><br>of jobs while you sleep</h1>
+  <p>DiceBot auto-applies to every Easy Apply job on Dice.com — 24/7. Built for C2C contractors who want vendors calling them, not the other way around.</p>
+  <div class="hero-btns">
+    <a href="https://github.com/trinathone/dice-bot" class="btn-dark">Download Free →</a>
+    <a href="#how" class="btn-outline">See How It Works</a>
+  </div>
+  <div class="hero-mockup">
+    <div class="mock-card">
+      <div class="mock-label">Applications Sent</div>
+      <div class="mock-value">8,202<span class="unit">total</span></div>
+      <div class="mock-sub green">↑ 99.76% success rate</div>
+      <div class="mock-bar"><div class="mock-bar-fill" style="width:99.76%"></div></div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-label">Bot Detections</div>
+      <div class="mock-value">0<span class="unit">ever</span></div>
+      <div class="mock-sub blue">Anti-detection active</div>
+      <div class="mock-bar"><div class="mock-bar-fill" style="width:0%"></div></div>
+    </div>
+    <div class="mock-card">
+      <div class="mock-label">Daily Rate</div>
+      <div class="mock-value">300<span class="unit">/day</span></div>
+      <div class="mock-sub green">↑ Safe threshold</div>
+      <div class="mock-bar"><div class="mock-bar-fill" style="width:75%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats ─────────────────────────────────────────────── -->
+<div id="stats">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num">8,202</span>
+      <span class="stat-label">Applications submitted in 10 days</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">99.76%</span>
+      <span class="stat-label">Application success rate</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Bot detections or CAPTCHAs</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── About ─────────────────────────────────────────────── -->
+<section id="about">
+  <div class="container-sm">
+    <div class="section-badge"><span class="star">★</span> ABOUT</div>
+    <h2>We are focused on getting<br>you <em>inbound calls</em>, not applications</h2>
+    <p>Most contractors apply to 10 jobs and wait. DiceBot gets your profile into thousands of vendor ATS systems automatically. When a real role comes in, vendors search their database — you surface.</p>
+  </div>
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-card-visual">🔍</div>
+        <div class="about-card-tag">AUTOMATED SEARCH</div>
+        <h3>Cycles through your keywords 24/7</h3>
+        <p>Reads keywords from a text file — one per line. Cycles through them in order, paginating each search until exhausted, then rotates to the next.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-visual">⚡</div>
+        <div class="about-card-tag">SMART APPLY</div>
+        <h3>Clicks Easy Apply and walks every form step</h3>
+        <p>Clicks Apply, walks multi-step forms, submits. Tracks every application — never applies to the same job twice across restarts.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-visual">🛡️</div>
+        <div class="about-card-tag">ANTI-DETECTION</div>
+        <h3>Bezier mouse paths, human typing, fingerprint spoofing</h3>
+        <p>Randomized mouse movement, typing delays, canvas fingerprint noise, WebGL spoofing, rotating viewports and user agents.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-visual">📊</div>
+        <div class="about-card-tag">FULL TRACKING</div>
+        <h3>Every application logged to CSV with status</h3>
+        <p>Applied, skipped, failed — all logged with timestamp and job URL. Opens in Excel, Google Sheets, or any CSV tool.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Benefits (blue section) ───────────────────────────── -->
+<div id="benefits">
+  <div class="section-badge" style="color:rgba(255,255,255,0.8);justify-content:center;display:flex;"><span style="color:#fff">★</span>&nbsp; BENEFITS</div>
+  <h2>Stop chasing. Start <em>receiving.</em></h2>
+  <p class="sub">Easily scale your job search with automated applications designed to maximize your visibility across the Dice.com ecosystem.</p>
+  <div class="benefits-grid">
+    <div class="benefit-card">
+      <div class="benefit-icon">💼</div>
+      <h4>Mass visibility fast</h4>
+      <p>Get your profile into thousands of vendor ATS systems in days, not months of manual applying.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">📈</div>
+      <h4>Inbound vendor calls</h4>
+      <p>Vendors find you in their own database when roles open. You respond to real calls instead of sending into the void.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">🔁</div>
+      <h4>Runs 24/7 unattended</h4>
+      <p>Auto-recovers from crashes, rotates keywords, handles logouts, and sleeps only 1 hour at 2am.</p>
+    </div>
+    <div class="benefit-card">
+      <div class="benefit-icon">🏦</div>
+      <h4>Free forever — open source</h4>
+      <p>GPL v3. No subscription. No per-application fees. Deploy on Oracle Cloud free tier and forget about it.</p>
+    </div>
+  </div>
+  <div class="benefits-cta">
+    <a href="https://github.com/trinathone/dice-bot" class="btn-white">Get Started Free →</a>
+  </div>
+</div>
+
+<!-- ── Features ──────────────────────────────────────────── -->
+<section id="features">
+  <div class="container">
+    <div class="head">
+      <div class="section-badge"><span class="star">★</span> CORE FEATURES</div>
+      <h2>Core features that set us <em>apart</em><br>from manual applying</h2>
+      <p class="sub">Everything built to handle Dice.com at scale — from stealth to deduplication to crash recovery.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-visual">
+          <div class="mini-stat">
+            <div class="num">99%</div>
+            <div class="lbl">Success rate</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="mini-gauge"><div class="inner">99%</div></div>
+        </div>
+        <div class="feature-tag">CLEAN INTERFACE</div>
+        <h3>Setup wizard — running in 3 minutes</h3>
+        <p>Run <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">python3 setup.py</code> — answers 5 questions, writes all config files automatically. No manual file editing required.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-visual">
+          <div class="mini-stat">
+            <div class="num">300+</div>
+            <div class="lbl">Apps/day</div>
+          </div>
+          <div style="flex:1"></div>
+          <div class="mini-gauge" style="background:conic-gradient(#16a34a 0% 75%, #e5e7eb 75% 100%)"><div class="inner">75%</div></div>
+        </div>
+        <div class="feature-tag">FASTER</div>
+        <h3>Automated processes — ~60 apps/hour</h3>
+        <p>Batch sizes, break intervals, and per-page limits all configurable. Streamlined to hit safe daily targets without triggering Dice rate limits.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-visual">
+          <div class="lock-visual">🔒</div>
+          <div style="margin-left:14px">
+            <div style="font-weight:700;font-size:.9rem;color:#1a1a2e">Session Guard</div>
+            <div style="font-size:.75rem;color:#888;margin-top:4px">Auto re-login on drop</div>
+          </div>
+        </div>
+        <div class="feature-tag">SECURE</div>
+        <h3>Auto re-login when session drops</h3>
+        <p>Detects mid-session logouts and re-authenticates automatically. Persistent browser profile keeps you logged in across restarts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-visual">
+          <div class="lock-visual">🕵️</div>
+          <div style="margin-left:14px">
+            <div style="font-weight:700;font-size:.9rem;color:#1a1a2e">0 Detections</div>
+            <div style="font-size:.75rem;color:#888;margin-top:4px">in 10-day run</div>
+          </div>
+        </div>
+        <div class="feature-tag">TRUSTED FEATURES</div>
+        <h3>Advanced stealth — zero CAPTCHA triggers</h3>
+        <p>Bezier mouse curves, human typing rhythm, WebGL/canvas fingerprint spoofing, rotating user agents and viewports — 0 detections in 8,202 applications.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ───────────────────────────────────────── -->
 <section id="how">
-  <h2>How It Works</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-icon">🔍</div>
-      <div>
-        <h3>Searches your keywords on Dice.com</h3>
-        <p>Reads from <code>keywords.txt</code> — one term per line. Cycles through them in order, paginating until exhausted, then rotates to the next.</p>
-      </div>
+  <div class="container">
+    <div class="head">
+      <div class="section-badge"><span class="star">★</span> HOW IT WORKS</div>
+      <h2>Up and running in <em>four steps</em></h2>
     </div>
-    <div class="step">
-      <div class="step-icon">💉</div>
-      <div>
-        <h3>Auto-applies to every C2C Easy Apply posting</h3>
-        <p>Clicks Apply, walks multi-step forms, uploads your resume, submits. Tracks every application — never applies to the same job twice.</p>
+    <div class="steps-list">
+      <div class="step-row">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-tag">INSTALL</div>
+          <h3>Install Python 3.11+ and dependencies</h3>
+          <p>Clone the repo, create a virtual environment, run <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">pip3 install -r requirements.txt</code> and <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">playwright install chromium</code>. Full instructions in START_HERE.md for both Windows and Mac.</p>
+        </div>
       </div>
-    </div>
-    <div class="step">
-      <div class="step-icon">📞</div>
-      <div>
-        <h3>Vendors with real roles find your resume and call you</h3>
-        <p>Your resume is now inside their ATS. When a matching role comes in, they search their database — you surface. Inbound only.</p>
+      <div class="step-row">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-tag">CONFIGURE</div>
+          <h3>Run the setup wizard</h3>
+          <p>Run <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">python3 setup.py</code> — it asks for your Dice credentials, target job type, keywords, and daily speed. Configures everything automatically in under 3 minutes.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-tag">RUN</div>
+          <h3>Start the bot</h3>
+          <p>Run <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">python3 dice_bot.py</code>. A Chrome window opens, logs in, and starts applying. Keep the terminal open or deploy to Oracle Cloud free tier for 24/7 headless operation.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-tag">RECEIVE</div>
+          <h3>Answer inbound vendor calls</h3>
+          <p>Your profile is now inside thousands of vendor ATS systems. When matching roles open, vendors find you and call. Check <code style="font-family:monospace;background:#f5f5f5;padding:2px 6px;border-radius:4px;font-size:.82rem">applications.csv</code> anytime to see the full log.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<hr>
-
-<!-- Who It's For -->
-<section id="who">
-  <h2>Who It's For</h2>
-  <div class="pills">
-    <span class="pill">C2C contractors on the bench</span>
-    <span class="pill">Bench sales recruiters</span>
-    <span class="pill">Independent IT consultants</span>
-    <span class="pill">1099 / Corp-to-Corp developers</span>
-    <span class="pill">Anyone tired of ghost jobs</span>
+<!-- ── Speed Tiers ────────────────────────────────────────── -->
+<div id="speeds">
+  <div class="head">
+    <div class="section-badge" style="color:rgba(255,255,255,0.8);justify-content:center;display:flex;"><span style="color:#fff">★</span>&nbsp; SPEED</div>
+    <h2>Choose your <em>daily pace</em></h2>
+    <p class="sub">Configure via the setup wizard or edit BATCH_SIZE in config.py directly</p>
   </div>
-</section>
+  <div class="speeds-grid">
+    <div class="speed-card">
+      <div class="speed-name">Low</div>
+      <div class="speed-range">50–100 <span class="speed-unit">/day</span></div>
+      <ul class="speed-feat">
+        <li>Very safe — low visibility risk</li>
+        <li>Batch size: 10–15 apps</li>
+        <li>Break: 8–12 min between batches</li>
+        <li>Good for testing</li>
+      </ul>
+      <a href="https://github.com/trinathone/dice-bot" class="speed-btn">Get Started</a>
+    </div>
+    <div class="speed-card featured">
+      <div class="speed-badge">RECOMMENDED ✓</div>
+      <div class="speed-name">High</div>
+      <div class="speed-range">200–300 <span class="speed-unit">/day</span></div>
+      <ul class="speed-feat">
+        <li>Safe — proven over 10 days</li>
+        <li>Batch size: 60–80 apps</li>
+        <li>Break: 3–5 min between batches</li>
+        <li>~8,000+ applications in 30 days</li>
+      </ul>
+      <a href="https://github.com/trinathone/dice-bot" class="speed-btn">Get Started</a>
+    </div>
+    <div class="speed-card">
+      <div class="speed-name">Max</div>
+      <div class="speed-range">300–400 <span class="speed-unit">/day</span></div>
+      <ul class="speed-feat">
+        <li>Higher visibility — use carefully</li>
+        <li>Batch size: 80–100 apps</li>
+        <li>Break: 2–3 min between batches</li>
+        <li>Not recommended long-term</li>
+      </ul>
+      <a href="https://github.com/trinathone/dice-bot" class="speed-btn">Get Started</a>
+    </div>
+  </div>
+</div>
 
-<hr>
-
-<!-- Why It Works -->
-<section id="why">
-  <h2>Why It Works</h2>
-  <blockquote>
-    Most contractors apply to 10 jobs and wait. <strong>DiceBot gets your resume into thousands of vendor ATS systems.</strong>
-    When a real role comes in, vendors search their own database — your resume surfaces.
-    You only respond to real inbound calls. <strong>No ghost jobs. No black hole applications.</strong>
-  </blockquote>
-</section>
-
-<hr>
-
-<!-- FAQ -->
+<!-- ── FAQ ───────────────────────────────────────────────── -->
 <section id="faq">
-  <h2>FAQ</h2>
-  <div class="faq">
-    <div class="faq-item">
-      <h3><span class="warn">⚠</span> Does this violate Dice.com's Terms of Service?</h3>
-      <p>Yes. Automated job applications are against Dice's ToS. The bot includes anti-detection measures (Bezier mouse paths, human typing delays, fingerprint spoofing) but no tool guarantees zero account risk. Use it at your own discretion.</p>
+  <div class="container-sm">
+    <div class="head">
+      <div class="section-badge"><span class="star">★</span> FAQ</div>
+      <h2>Common <em>questions</em></h2>
     </div>
-    <div class="faq-item">
-      <h3>Which jobs does it apply to?</h3>
-      <p>Easy Apply jobs only — the ones with a one-click apply button hosted on Dice. Jobs that redirect to external ATS platforms (Workday, Greenhouse, Lever) are skipped automatically.</p>
-    </div>
-    <div class="faq-item">
-      <h3>Does it customize my resume per application?</h3>
-      <p>No. The same resume PDF is uploaded to every application. You point <code>RESUME_PATH</code> in <code>.env</code> to a single file. Resume rotation per keyword is on the roadmap.</p>
-    </div>
-    <div class="faq-item">
-      <h3>How many applications per day is safe?</h3>
-      <p>250–300/day is the recommended rate. Running above 300/day increases the risk of account action. Control throughput via <code>BATCH_SIZE</code> and <code>BATCH_BREAK_MINUTES</code> in <code>config.py</code>.</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span><span class="warn">⚠</span> Does this violate Dice.com's Terms of Service?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Yes. Automated job applications are against Dice's ToS. The bot includes anti-detection measures — Bezier mouse paths, human typing delays, fingerprint spoofing — but no tool guarantees zero account risk. Use at your own discretion.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Which jobs does it apply to?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Easy Apply jobs only — the ones with a one-click apply button hosted directly on Dice. Jobs that redirect to external ATS platforms (Workday, Greenhouse, Lever) are automatically skipped and closed.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Do I need to upload a resume file?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">No. DiceBot uses your resume that's already uploaded to your Dice.com account. No local resume file needed — just your login credentials.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          How many applications per day is safe?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">250–300/day is the tested safe rate — proven over a real 10-day run with 0 detections. Running above 300/day increases risk. Control via BATCH_SIZE and BATCH_BREAK_MINUTES in config.py.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Can I run it 24/7 for free?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">Yes. Oracle Cloud Free Tier gives you a permanently free ARM VM (4 OCPUs, 24GB RAM). Set HEADLESS=True in config.py, deploy there, and it runs unattended. Full instructions in README.md.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          What if it gets logged out mid-run?
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a">DiceBot automatically detects login page redirects anywhere during the run and re-authenticates using your stored credentials. It then continues exactly where it left off.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
+<!-- ── CTA ───────────────────────────────────────────────── -->
+<div id="cta">
+  <h2>Start getting <em>inbound calls</em><br>from vendors today</h2>
+  <p>Free forever. Open source. No subscription. Clone, configure in 3 minutes, and let it run.</p>
+  <div class="cta-btns">
+    <a href="https://github.com/trinathone/dice-bot" class="btn-cta">Download on GitHub →</a>
+    <a href="START_HERE.md" class="btn-cta-ghost">Read Setup Guide</a>
+  </div>
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
 <footer>
-  <div>Free forever. Open Source. GPL v3 License.</div>
-  <div class="links">
-    <a href="#github">GitHub →</a>
-    <a href="mailto:your@email.com">Contact</a>
+  <div class="footer-inner">
+    <div class="footer-logo">DiceBot</div>
+    <div class="footer-copy">GPL v3 — Free to use and modify.</div>
+    <div class="footer-links">
+      <a href="https://github.com/trinathone/dice-bot">GitHub</a>
+      <a href="README.md">Docs</a>
+      <a href="START_HERE.md">Setup</a>
+    </div>
   </div>
 </footer>
 
+<script>
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+function openMenu() {
+  document.getElementById('mobileMenu').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMenu(e) {
+  if (!e || e.target === document.getElementById('mobileMenu') || e.currentTarget.classList.contains('drawer-close') || e.currentTarget.tagName === 'A') {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// Smooth anchor close on mobile links
+document.querySelectorAll('.mobile-drawer a[href^="#"]').forEach(a => {
+  a.addEventListener('click', () => closeMenu());
+});
+</script>
 </body>
 </html>
