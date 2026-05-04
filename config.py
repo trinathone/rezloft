@@ -44,7 +44,7 @@ def load_keywords() -> list:
 
 # ── Only 2 Filters Applied ───────────────────────────────────
 EASY_APPLY_ONLY = True
-JOB_TYPES       = ["fulltime"]   # fulltime only
+JOB_TYPES       = ['fulltime']
 REMOTE_ONLY     = False
 JOB_LOCATION    = ""             # no location filter — widest net
 
@@ -56,8 +56,8 @@ TYPING_SPEED          = (40, 100)
 MAX_CONSECUTIVE_FAILS = 5
 BREAK_EVERY_N_APPS    = 10
 BREAK_DURATION        = (20, 40)
-BATCH_SIZE            = (60, 80)
-BATCH_BREAK_MINUTES   = (3, 5)
+BATCH_SIZE            = (80, 100)
+BATCH_BREAK_MINUTES   = (2, 3)
 
 # ── Sleep Schedule ───────────────────────────────────────────
 SLEEP_HOUR_START = 2   # 2am
