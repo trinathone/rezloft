@@ -12,7 +12,6 @@ Dice.com Auto-Apply Bot — Production v2
 import asyncio
 import random
 from datetime import datetime
-from pathlib import Path
 
 from playwright.async_api import async_playwright, Page, BrowserContext
 
@@ -486,17 +485,6 @@ class DiceBot:
     # ── Form Handler ──────────────────────────────────────────
     async def _handle_apply_form(self):
         await asyncio.sleep(1.5)
-
-        # Resume upload if needed
-        if cfg.RESUME_PATH:
-            try:
-                file_input = self.page.locator('input[type="file"]').first
-                if await file_input.is_visible(timeout=2_000):
-                    await file_input.set_input_files(cfg.RESUME_PATH)
-                    logger.info("Uploaded resume")
-                    await short_delay()
-            except Exception:
-                pass
 
         # Walk through up to 8 form steps
         for _ in range(8):

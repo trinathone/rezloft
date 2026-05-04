@@ -1,15 +1,15 @@
-# DiceBot — Automated C2C Resume Injector for Dice.com
+# DiceBot — Automated Dice.com Job Application Bot
 
 > **New here? Read [START_HERE.md](START_HERE.md) first.**
 
-> Gets your resume into 8,000+ vendor databases automatically. Let vendors find you.
+> Gets you into 8,000+ vendor databases automatically. Let vendors find you.
 
 ---
 
 ## What It Does
 
 - Logs into your Dice.com account and searches hundreds of keywords from a file you control
-- Clicks **Easy Apply** on every matching job — walks through multi-step forms, uploads your resume, submits
+- Clicks **Easy Apply** on every matching job — walks through multi-step forms and submits
 - Tracks every application in `applications.csv` and never applies to the same job twice
 
 ---
@@ -40,7 +40,7 @@ cp keywords.example.txt keywords.txt
 
 # 3. Configure credentials
 cp env.example .env
-# Edit .env with your Dice email, password, and resume path
+# Edit .env with your Dice email and password
 
 # 4. Run
 python dice_bot.py
@@ -77,7 +77,6 @@ Copy `keywords.example.txt` as a starting point — it includes 20 common IT/C2C
 |---|---|---|
 | `DICE_EMAIL` | ✅ | Your Dice.com login email |
 | `DICE_PASSWORD` | ✅ | Your Dice.com password |
-| `RESUME_PATH` | ✅ | Absolute path to your resume PDF |
 | `PROXY` | ❌ | Optional SOCKS5/HTTP proxy (`socks5://user:pass@host:port`) |
 | `DEBUG` | ❌ | Set `true` for verbose logging (default: `false`) |
 
@@ -144,7 +143,6 @@ Applications are logged to `applications.csv` with timestamp, job title, URL, an
 
 - **Dice.com only.** No LinkedIn, ZipRecruiter, Indeed, or other platforms.
 - **Easy Apply jobs only.** Jobs that redirect to an external ATS (Workday, Greenhouse, Lever) are skipped — those require form-filling the bot doesn't handle.
-- **No resume customization.** Same resume file uploaded to every application.
 - **Terms of Service.** Automated job applications violate Dice.com's ToS. Use at your own risk. The bot includes anti-detection measures but no tool can guarantee zero risk of account action.
 - **Company and location fields are blank** in `applications.csv` — Dice's search results page doesn't expose them without opening each listing individually (too slow at scale).
 
@@ -155,7 +153,6 @@ Applications are logged to `applications.csv` with timestamp, job title, URL, an
 PRs welcome. Areas that would have the most impact:
 
 - **Multi-platform support** — ZipRecruiter, Indeed Easy Apply
-- **Resume variation** — rotate between multiple resume files per keyword category
 - **Smarter form filling** — handle common ATS fields (phone, years of experience, sponsorship)
 - **Dashboard** — simple web UI over `applications.csv` to track response rates
 

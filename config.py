@@ -48,9 +48,6 @@ JOB_TYPES       = ["fulltime"]   # fulltime only
 REMOTE_ONLY     = False
 JOB_LOCATION    = ""             # no location filter — widest net
 
-# ── Resume ───────────────────────────────────────────────────
-RESUME_PATH = os.getenv("RESUME_PATH", "")
-
 # ── Speed — tuned for ~60 apps/hour ─────────────────────────
 MIN_DELAY             = 1
 MAX_DELAY             = 3
