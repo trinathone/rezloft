@@ -1,176 +1,199 @@
-# DiceBot — Automated Dice.com Job Application Bot
+<div align="center">
 
-> **New here? Read [START_HERE.md](START_HERE.md) first.**
-> https://rezloft.vercel.app/
+<h1>🎲 DiceBot</h1>
 
-> Gets you into 8,000+ vendor databases automatically. Let vendors find you.
+<p><strong>Apply to 300 Dice.com jobs per day — automatically, while you sleep.</strong></p>
+
+<img src="https://img.shields.io/badge/version-2.0-2dd4bf?style=flat-square&labelColor=0d1117"/>
+<img src="https://img.shields.io/github/stars/trinathone/rezloft?style=flat-square&color=2dd4bf&labelColor=0d1117"/>
+<img src="https://img.shields.io/badge/license-GPL--v3-2dd4bf?style=flat-square&labelColor=0d1117"/>
+<img src="https://img.shields.io/badge/platform-Python%203.10%2B-2dd4bf?style=flat-square&labelColor=0d1117"/>
+<img src="https://img.shields.io/badge/CAPTCHAs_triggered-0-2dd4bf?style=flat-square&labelColor=0d1117"/>
+
+<br/><br/>
+
+> **8,202 applications submitted in 10 days. 99.76% success rate. Zero bans.**
+
+</div>
 
 ---
 
 ## What It Does
 
-- Logs into your Dice.com account and searches hundreds of keywords from a file you control
-- Clicks **Easy Apply** on every matching job — walks through multi-step forms and submits
-- Tracks every application in `applications.csv` and never applies to the same job twice
+DiceBot logs into your Dice.com account, cycles through keywords you control, and clicks **Easy Apply** on every matching job — fully automated. It tracks every application in a CSV so it never applies to the same job twice, then puts itself to sleep at 2 AM and wakes back up at 3 AM without you touching a thing.
+
+**Who it's for:**
+- C2C contractors on the bench who need mass vendor visibility fast
+- Bench sales recruiters managing candidate pipelines on Dice
+- Independent IT consultants who want inbound vendor calls, not cold outreach
 
 ---
 
-## Who It's For
-
-- **C2C contractors** on the bench who need mass visibility fast
-- **Bench sales recruiters** managing candidate pipelines on Dice
-- **Independent IT consultants** who want inbound vendor calls instead of cold outreach
-
-If you bill on 1099 or Corp-to-Corp and Dice is part of your sourcing strategy, this automates the grunt work.
-
----
-
-## Quick Start
-
-```bash
-# 1. Clone and install
-git clone https://github.com/trinathone/rezloft.git
-cd rezloft
-python3 -m venv .venv && source .venv/bin/activate
-pip3 install -r requirements.txt
-playwright install chromium
-
-# 2. Run setup wizard (configures credentials, keywords, speed)
-python3 setup.py
-
-# 3. Run the bot
-python3 dice_bot.py
-```
-
-> **Windows?** See [START_HERE.md](START_HERE.md) for Windows-specific instructions.
-
----
-
-## Configuration
-
-### `keywords.txt`
-
-One keyword per line. Lines starting with `#` are comments. Blank lines are ignored.
-Keywords are cycled **in order** — the bot rotates to the next keyword when the current one is exhausted (3 consecutive pages of already-applied jobs, or 0 results).
-
-```
-# keywords.txt example
-Python Developer
-AWS
-Data Engineer
-DevOps Engineer
-```
-
-Copy `keywords.example.txt` as a starting point — it includes 20 common IT/C2C terms.
-
-> If `keywords.txt` is missing, the bot exits immediately with a clear error message.
-
----
-
-### `.env`
-
-The setup wizard (`python3 setup.py`) creates this automatically. You can also edit it manually:
-
-| Variable | Required | Description |
-|---|---|---|
-| `DICE_EMAIL` | ✅ | Your Dice.com login email |
-| `DICE_PASSWORD` | ✅ | Your Dice.com password |
-| `PROXY` | ❌ | Optional SOCKS5/HTTP proxy (`socks5://user:pass@host:port`) |
-| `DEBUG` | ❌ | Set `true` for verbose logging (default: `false`) |
-
-### `config.py` tuning
-
-Edit `config.py` directly to change these:
-
-| Setting | Default | Description |
-|---|---|---|
-| `EASY_APPLY_ONLY` | `True` | Only apply to Easy Apply jobs |
-| `JOB_TYPES` | `['fulltime']` | Filter by job type (`'contract'` or `'fulltime'`) |
-| `REMOTE_ONLY` | `False` | Remote jobs only |
-| `JOB_LOCATION` | `""` | Location filter (empty = nationwide) |
-| `SLEEP_HOUR_START` | `2` | Bot sleeps after this hour (24h) |
-| `SLEEP_HOUR_END` | `3` | Bot wakes at this hour (24h) |
-| `BATCH_SIZE` | `(80, 100)` | Apps per batch before a short break |
-| `BATCH_BREAK_MINUTES` | `(2, 3)` | Break duration between batches (minutes) |
-
----
-
-## How to Run 24/7 Free
-
-[Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/) gives you a permanently free ARM VM (4 OCPUs, 24GB RAM) — more than enough.
-
-```bash
-# On your Oracle VM (Ubuntu)
-sudo apt update && sudo apt install -y python3-pip python3-venv
-git clone https://github.com/trinathone/rezloft.git && cd rezloft
-python3 -m venv .venv && source .venv/bin/activate
-pip3 install -r requirements.txt
-playwright install chromium --with-deps
-
-# Run setup wizard first
-python3 setup.py
-
-# Run headless in the background (set HEADLESS=True in config.py first)
-nohup python3 dice_bot.py > /dev/null 2>&1 &
-
-# Or with screen so you can detach/reattach
-screen -S dicebot
-python3 dice_bot.py
-# Ctrl+A D to detach
-```
-
-> Set `HEADLESS = True` in `config.py` before running on a server (no display available).
-
----
-
-## Results
-
-Measured over a real 10-day run (April 14–23, 2026):
+## Results (Real Run: April 14–23, 2026)
 
 | Metric | Value |
 |---|---|
 | Total applications submitted | **8,202** |
 | Success rate | **99.76%** |
 | Failed applications | 10 |
-| Skipped (no Apply button) | 10 |
-| Bot detections / CAPTCHAs triggered | **0** |
-| Average per day | ~250–300 (recommended safe rate) |
+| Bot detections / CAPTCHAs | **0** |
+| Average per day | ~250–300 |
+| Run duration | 10 days, unattended |
 
-> **⚠️ Running above 300 applications/day is not recommended.** Higher rates increase the risk of account action from Dice. Control throughput via `BATCH_SIZE` and `BATCH_BREAK_MINUTES` in `config.py`.
+> ⚠️ **Stay under 300 apps/day.** The bot enforces this by default via `BATCH_SIZE` and `BATCH_BREAK_MINUTES` in `config.py`.
 
-Applications are logged to `applications.csv` with timestamp, job title, URL, and status.
+---
+
+## Quick Start
+
+> **First time? Read [START_HERE.md](START_HERE.md) for Windows + macOS step-by-step walkthrough.**
+
+```bash
+# 1. Clone and install (≈ 2 min)
+git clone https://github.com/trinathone/rezloft.git
+cd rezloft
+python3 -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+playwright install chromium
+
+# 2. Setup wizard — sets your Dice credentials + keywords + speed
+python3 setup.py
+
+# 3. Run
+python3 dice_bot.py
+```
+
+The bot opens a browser, logs in, and starts applying. Applications are logged to `applications.csv` in real time.
+
+---
+
+## Configuration
+
+### `keywords.txt` — what to search
+
+One keyword per line. The bot cycles them in order, moving to the next when the current keyword is exhausted.
+
+```
+# keywords.txt
+Python Developer
+AWS Solutions Architect
+Data Engineer
+DevOps Engineer
+Java Developer
+```
+
+Copy `keywords.example.txt` as your starting point — 20 common IT/C2C terms included.
+
+### `.env` — credentials
+
+Created automatically by `python3 setup.py`. You can also edit it manually:
+
+| Variable | Required | Description |
+|---|---|---|
+| `DICE_EMAIL` | ✅ | Your Dice.com login email |
+| `DICE_PASSWORD` | ✅ | Your Dice.com password |
+| `PROXY` | ❌ | Optional SOCKS5/HTTP proxy |
+| `DEBUG` | ❌ | `true` for verbose logging |
+
+### `config.py` — speed & filters
+
+| Setting | Default | Description |
+|---|---|---|
+| `EASY_APPLY_ONLY` | `True` | Only Easy Apply jobs |
+| `JOB_TYPES` | `['fulltime']` | `'contract'` or `'fulltime'` |
+| `REMOTE_ONLY` | `False` | Remote jobs only |
+| `BATCH_SIZE` | `(80, 100)` | Apps per batch before a break |
+| `BATCH_BREAK_MINUTES` | `(2, 3)` | Break length between batches |
+| `SLEEP_HOUR_START` | `2` | Bot sleeps after this hour |
+| `SLEEP_HOUR_END` | `3` | Bot wakes at this hour |
+| `HEADLESS` | `False` | Set `True` for server deploys |
+
+---
+
+## Run 24/7 for Free (Oracle Cloud)
+
+[Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/) gives you a permanently free ARM VM (4 OCPUs, 24 GB RAM). No credit card tricks — it's actually free.
+
+```bash
+# On your Oracle Ubuntu VM
+sudo apt update && sudo apt install -y python3-pip python3-venv
+git clone https://github.com/trinathone/rezloft.git && cd rezloft
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium --with-deps
+
+python3 setup.py        # configure once
+# set HEADLESS = True in config.py
+screen -S dicebot
+python3 dice_bot.py
+# Ctrl+A D to detach — bot keeps running
+```
+
+---
+
+## How It Works
+
+```
+keywords.txt
+    │
+    ▼
+Dice.com Search (Playwright + Chromium)
+    │  per-keyword, paginated
+    ▼
+Easy Apply filter → parse job listings
+    │  skip if URL already in applications.csv
+    ▼
+Multi-step form walk + Submit
+    │
+    ▼
+applications.csv  ← timestamp, title, URL, status
+    │
+    ▼
+Batch break → next keyword → sleep 2–3 AM → repeat
+```
+
+Anti-detection: Bezier mouse curves, human-speed typing, randomized viewport + user-agent, randomized delays, no screenshots, rotating logs.
 
 ---
 
 ## Known Limitations
 
-- **Dice.com only.** No LinkedIn, ZipRecruiter, Indeed, or other platforms.
-- **Easy Apply jobs only.** Jobs that redirect to an external ATS (Workday, Greenhouse, Lever) are skipped — those require form-filling the bot doesn't handle.
-- **Terms of Service.** Automated job applications violate Dice.com's ToS. Use at your own risk. The bot includes anti-detection measures but no tool can guarantee zero risk of account action.
-- **Company and location fields are blank** in `applications.csv` — Dice's search results page doesn't expose them without opening each listing individually (too slow at scale).
+- **Dice.com only.** No LinkedIn, Indeed, ZipRecruiter — yet. (See Contributing.)
+- **Easy Apply only.** External ATS (Workday, Greenhouse, Lever) are skipped.
+- **Terms of Service.** Automated applications violate Dice's ToS. Use at your own risk.
+- Company and location fields are blank in the CSV — Dice doesn't expose them on search result pages at this scale.
 
 ---
 
 ## Contributing
 
-PRs welcome. Areas that would have the most impact:
+PRs welcome. Check [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
 
-- **Multi-platform support** — ZipRecruiter, Indeed Easy Apply
-- **Smarter form filling** — handle common ATS fields (phone, years of experience, sponsorship)
-- **Dashboard** — simple web UI over `applications.csv` to track response rates
+**High-impact areas — good first issues:**
 
-Open an issue before starting large changes.
+| Label | Task |
+|---|---|
+| `good first issue` | Add `--dry-run` flag that logs without submitting |
+| `good first issue` | Windows one-click `.bat` installer |
+| `good first issue` | Telegram notification on batch completion |
+| `enhancement` | Indeed Easy Apply support |
+| `enhancement` | ZipRecruiter Easy Apply support |
+| `enhancement` | Web dashboard over `applications.csv` |
+| `enhancement` | CAPTCHA solver integration |
+
+Open an issue before starting any large feature.
 
 ---
 
-## Support & Community
+## Community & Support
 
-- 💬 Telegram: https://t.me/+rz7W7lhhUEkwOTM1
-- 📧 Email: trinath.connect@proton.me
-- ⭐ If DiceBot helped you land a contract, star the repo!
+- 💬 **Telegram:** https://t.me/+rz7W7lhhUEkwOTM1
+- 🌐 **Web:** https://rezloft.vercel.app/
+- 📧 **Email:** trinath.connect@proton.me
+- ⭐ **If DiceBot helped you land a contract, star the repo** — it helps others find it.
 
 ---
 
 ## License
 
-GPL v3 — Free to use and modify. If you build a paid product from this code, you must open source it too.
+GPL v3 — Free to use and modify. If you build a paid product on top of this, you must open-source it too.
